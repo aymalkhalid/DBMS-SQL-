@@ -1,0 +1,48 @@
+----TRANSACTION IN SQL----
+----DATA INTEGRITY----
+DROP TABLE IF EXISTS widgetInventory;
+DROP TABLE IF EXISTS widgetSales;
+
+CREATE TABLE widgetInventory (
+  id INTEGER PRIMARY KEY,
+  description TEXT,
+  onhand INTEGER NOT NULL
+);
+
+CREATE TABLE widgetSales (
+  id INTEGER PRIMARY KEY,
+  inv_id INTEGER,
+  quan INTEGER,
+  price INTEGER
+);
+
+INSERT INTO widgetInventory ( description, onhand ) VALUES ( 'rock', 25 );
+INSERT INTO widgetInventory ( description, onhand ) VALUES ( 'paper', 25 );
+INSERT INTO widgetInventory ( description, onhand ) VALUES ( 'scissors', 25 );
+
+SELECT * FROM widgetInventory;
+SELECT * FROM widgetSales;
+
+BEGIN TRANSACTION;
+INSERT INTO widgetSales (inv_id,quan,price) VALUES(1,5,500);
+UPDATE widgetInventory SET ONHAND=(ONHAND-5) where id=1;
+END TRANSACTION;
+---ROLLBACK-----
+BEGIN TRANSACTION
+INSERT INTO widgetInventory (description,onhand) VALUES('cartoon',1269);
+ROLLBACK;
+
+---PERFORMANCE CHECK------
+CREATE TABLE Performance(
+  id INTEGER PRIMARY KEY,
+  description TEXT
+);
+----Without Transaction----
+Insert into Performance(description) VAlues('ZA MARA');
+Insert into Performance(description) VAlues('ZA MARA');
+
+BEGIN TRANSACTION
+Insert into Performance(description) VAlues('ZA MARA');
+Insert into Performance(description) VAlues('ZA MARA');
+END TRANSACTION
+Drop Table IF EXISTS PERFORMANCE;

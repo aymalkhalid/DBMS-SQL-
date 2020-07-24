@@ -1,0 +1,70 @@
+---VIEWS AND SUBWIEWS---
+DROP TABLE IF EXISTS  t;
+CREATE TABLE t ( a TEXT, b TEXT );
+INSERT INTO t VALUES ( 'NY0123', 'US4567' );
+INSERT INTO t VALUES ( 'AZ9437', 'GB1234' );
+INSERT INTO t VALUES ( 'CA1279', 'FR5678' );
+SELECT * FROM t;
+SELECT co.Name, ss.CCode FROM 
+( SELECT SUBSTR(a,1,2) AS State, SUBSTR(a,3) AS SCode, SUBSTR(b,1,2) AS Country, SUBSTR(b,3) AS CCode FROM t
+) AS ss 
+JOIN Country AS co 
+ON co.Code2 =ss.Country;
+
+---SEARCHING WITHIN A RESULT STATE--
+SELECT *FROM album WHERE ID IN
+(select Distinct (album_id) from track  where duration <69);
+----SEarching WIthin A Result USING JOIN------
+SELECT a.title AS ALBUM, a.artist,t.track_number AS seq, t.title,t.duration AS secs
+FROM album AS a
+JOIN track as t
+ ON t.album_id=a.id
+ Where a.id IN (SELECT DISTINCT album_id FROM track WHERE duration<=90)
+ ORDER BY a.title, t.track_number;
+ 
+-----SELECTING ONLY TRACK
+SELECT a.title AS album, a.artist,t.track_number AS seq, t.title,t.duration AS secs
+FROM album AS a
+JOIN (
+SELECT DISTINCT album_id, track_number, duration, title
+FROM track
+WHERE duration <=90
+)AS t
+ON t.album_id = a.id
+ORDER BY a.title, t.track_number;
+
+--CREATING VIEW
+CREATE VIEW trackView AS
+    SELECT id,album_id,title,track_number,
+    duration / 60 AS minute, duration%60 AS Seconds FROM track;
+--- SHOWING VIEW With other Funcations
+SELECT * FROM trackView;
+SELECT a.title AS album, a.artist, t.track_number AS seq, t.title, t.minute, t.seconds
+  FROM album AS a
+  JOIN trackView AS t
+    ON t.album_id = a.id
+  ORDER BY a.title, t.track_number
+;
+DROP VIEW IF EXISTS trackView;
+---CREATING A JOINED VIEW-------
+CREATE VIEW JOINEDALBUM AS
+SELECT a.artist AS artist,
+    a.title AS album,
+    t.title AS track,
+    t.track_number AS trackno,
+    t.duration / 60 AS m,
+    t.duration % 60 AS s
+  FROM track AS t
+    JOIN album AS a
+      ON a.id = t.album_id
+;
+
+SELECT * FROM joinedAlbum;
+SELECT * FROM joinedAlbum WHERE artist = 'Jimi Hendrix';
+
+SELECT artist, album, track, trackno, 
+   m || ':' || substr('00' || s, -2, 2) AS duration
+    FROM joinedAlbum;
+
+DROP VIEW IF EXISTS joinedAlbum;
+
