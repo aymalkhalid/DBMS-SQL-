@@ -1,0 +1,30 @@
+-- Aggregate Functions
+SELECT COUNT(*) FROM Country;
+SELECT Continent,COUNT(*) AS TOTAL_COUNTRIES
+FROM COUNTRY
+GROUP BY Continent ORDER BY TOTAL_COUNTRIES DESC;
+-- AGGREGATE AND JOIN----
+SElECT a.title AS ALBUM, COUNT(t.track_number) as Tracks
+FROM track AS t
+JOIN album AS a
+ON a.id=t.album_id
+GROUP BY a.id
+HAVING Tracks>=10
+ORDER BY Tracks DESC, Album;
+-- AGGREGATE JOING AND HAVING CLAUSE---
+SElECT a.artist,a.title AS ALBUM, COUNT(t.track_number) as Tracks
+FROM track AS t
+JOIN album AS a
+ON a.id=t.album_id
+Where a.artist='The Beatles'
+GROUP BY a.id
+HAVING Tracks>=10
+ORDER BY Tracks DESC, Album;
+
+select Count(*) from Country;
+select Count(LifeExpectancy) from Country;
+select Continent, Round(Avg(Population)) from Country Group By Region;
+select Continent, Avg(Population) Average from Country Group By Continent;
+select Region, Avg(Population) Average from Country Group By Region;
+select Distinct(HeadOfState) , name from country Group by Name;
+select name,headOfState from country where name ='Pakistan';
